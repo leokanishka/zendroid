@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ZenDroid</string>
+    <string name="accessibility_service_description">ZenDroid uses Accessibility to detect when you open apps and provide a moment of reflection before launching potentially distracting applications. We do not read or store any content from your screen.</string>
+    <string name="guardian_notification_title">ZenDroid Shield Active</string>
+    <string name="guardian_notification_text">Protecting your focus</string>
+    <string name="shield_down_title">ZenDroid Shield is Down</string>
+    <string name="shield_down_text">Tap to re-enable protection</string>
+</resources>

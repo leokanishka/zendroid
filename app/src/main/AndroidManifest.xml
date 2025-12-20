@@ -5,7 +5,23 @@
     <!-- Launcher Permissions -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
-    <uses-permission android:name="android.permission.use_fullscreen_intent" />
+    
+    <!-- Overlay Permission (Gap C1) -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    
+    <!-- Foreground Service Permissions (Gap B3, B4) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    
+    <!-- Boot Completed for Session Restoration (Gap G1) -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    
+    <!-- Alarm for Watchdog (Gap B1) -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    
+    <!-- Usage Stats for Fallback Detection -->
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:name=".ZenDroidApp"
@@ -19,6 +35,7 @@
         android:theme="@style/Theme.ZenDroid"
         tools:targetApi="31">
         
+        <!-- Main Launcher Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -31,6 +48,61 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        
+        <!-- Intervention Activity (Overlay) -->
+        <activity
+            android:name=".ui.intervention.InterventionActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.ZenDroid.Transparent"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        
+        <!-- Accessibility Service (Gap A1: Real-time detection) -->
+        <service
+            android:name=".service.ZenDroidAccessibilityService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+        
+        <!-- Guardian Foreground Service (Gap B1, B3) -->
+        <service
+            android:name=".service.GuardianService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="digital_wellbeing_screen_time_management" />
+        </service>
+        
+        <!-- Boot Completed Receiver (Gap G1, B4) -->
+        <receiver
+            android:name=".receiver.BootCompletedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
+        
+        <!-- Package Change Receiver (Gap D2) -->
+        <receiver
+            android:name=".receiver.PackageChangeReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

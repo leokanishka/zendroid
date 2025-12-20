@@ -19,4 +19,7 @@ interface AppDao {
     
     @Query("UPDATE apps SET usageCount = usageCount + 1, lastOpened = :timestamp WHERE packageName = :packageName")
     suspend fun recordUsage(packageName: String, timestamp: Long)
+
+    @Query("SELECT * FROM apps WHERE packageName = :packageName LIMIT 1")
+    suspend fun getAppByPackage(packageName: String): AppEntity?
 }

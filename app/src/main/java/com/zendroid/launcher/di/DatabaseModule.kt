@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.zendroid.launcher.data.db.AppDao
 import com.zendroid.launcher.data.db.AppDatabase
+import com.zendroid.launcher.data.db.SessionDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,11 +23,18 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "zendroid_db"
-        ).build()
+        )
+        .fallbackToDestructiveMigration() // TODO: Add proper migration for production
+        .build()
     }
 
     @Provides
     fun provideAppDao(database: AppDatabase): AppDao {
         return database.appDao()
+    }
+
+    @Provides
+    fun provideSessionDao(database: AppDatabase): SessionDao {
+        return database.sessionDao()
     }
 }
