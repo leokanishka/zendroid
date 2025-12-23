@@ -31,37 +31,36 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
-    PerformanceMonitor.trace("HomeScreenComposition") {
-        Box(modifier = Modifier.fillMaxSize()) {
-            when (val state = uiState) {
-                is HomeUiState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                is HomeUiState.Success -> {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        AppList(
-                            apps = state.apps,
-                            onAppClick = { app ->
-                                val intent = context.packageManager.getLaunchIntentForPackage(app.packageName)
-                                if (intent != null) {
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    context.startActivity(intent)
-                                }
-                            },
-                            modifier = Modifier.weight(1f)
-                        )
-                        
-                        // Search Bar (Bottom)
-                        TextField(
-                            value = viewModel.searchQuery.collectAsState().value, 
-                            onValueChange = viewModel::onSearchQueryChanged,
-                            placeholder = { Text("Type to search...") },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            singleLine = true
-                        )
-                    }
+    // Note: PerformanceMonitor.trace cannot wrap @Composable content directly
+    Box(modifier = Modifier.fillMaxSize()) {
+        when (val state = uiState) {
+            is HomeUiState.Loading -> {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+            is HomeUiState.Success -> {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    AppList(
+                        apps = state.apps,
+                        onAppClick = { app ->
+                            val intent = context.packageManager.getLaunchIntentForPackage(app.packageName)
+                            if (intent != null) {
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                context.startActivity(intent)
+                            }
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    
+                    // Search Bar (Bottom)
+                    TextField(
+                        value = viewModel.searchQuery.collectAsState().value, 
+                        onValueChange = viewModel::onSearchQueryChanged,
+                        placeholder = { Text("Type to search...") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        singleLine = true
+                    )
                 }
             }
         }

@@ -59,6 +59,13 @@
             android:taskAffinity=""
             android:configChanges="orientation|screenSize|keyboardHidden" />
         
+        <!-- Settings Activity -->
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ZenDroid"
+            android:label="Settings" />
+        
         <!-- Accessibility Service (Gap A1: Real-time detection) -->
         <service
             android:name=".service.ZenDroidAccessibilityService"

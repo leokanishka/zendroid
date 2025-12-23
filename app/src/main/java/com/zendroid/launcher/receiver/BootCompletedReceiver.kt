@@ -22,6 +22,12 @@ class BootCompletedReceiver : BroadcastReceiver() {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED ||
             intent.action == "android.intent.action.QUICKBOOT_POWERON") {
             
+            // Check if protection is enabled (Security Fix)
+            val prefs = context.getSharedPreferences("zendroid_settings", Context.MODE_PRIVATE)
+            if (!prefs.getBoolean("protection_enabled", true)) {
+                return 
+            }
+
             // Use WorkManager to start Guardian after device is ready (Gap B4)
             val workRequest = OneTimeWorkRequestBuilder<StartGuardianWorker>()
                 .build()

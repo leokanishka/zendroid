@@ -12,6 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,6 +29,7 @@ class InterventionManager @Inject constructor(
     private val sessionRepository: SessionRepository
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private val isInterventionActive = AtomicBoolean(false)
 
     // Categories: GREEN = always allow, YELLOW = soft friction, RED = full intervention
     enum class AppCategory { GREEN, YELLOW, RED }
@@ -37,23 +39,40 @@ class InterventionManager @Inject constructor(
      * Called from AccessibilityService on TYPE_WINDOW_STATE_CHANGED.
      */
     fun evaluateLaunch(packageName: String, className: String) {
+        if (!isInterventionActive.compareAndSet(false, true)) return
+
         scope.launch {
-            val category = getAppCategory(packageName)
-            
-            when (category) {
-                AppCategory.GREEN -> {
-                    // Allow silently
-                    return@launch
+            try {
+                val category = getAppCategory(packageName)
+                
+                when (category) {
+                    AppCategory.GREEN -> {
+                        // Allow silently
+                        return@launch
+                    }
+                    AppCategory.YELLOW -> {
+                        // TODO: Show bottom sheet (Sprint 3)
+                        return@launch
+                    }
+                    AppCategory.RED -> {
+                        handleRedApp(packageName)
+                    }
                 }
-                AppCategory.YELLOW -> {
-                    // TODO: Show bottom sheet (Sprint 3)
-                    return@launch
-                }
-                AppCategory.RED -> {
-                    handleRedApp(packageName)
+            } finally {
+                // Keep locked if InterventionActivity is showing - it will reset the lock
+                // or we reset it here if we didn't launch an activity
+                if (getAppCategory(packageName) != AppCategory.RED) {
+                    isInterventionActive.set(false)
                 }
             }
         }
+    }
+
+    /**
+     * Call this when InterventionActivity is dismissed or session is granted.
+     */
+    fun resetInterventionLock() {
+        isInterventionActive.set(false)
     }
 
     private suspend fun handleRedApp(packageName: String) {
