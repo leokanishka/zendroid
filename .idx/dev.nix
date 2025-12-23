@@ -11,7 +11,7 @@
 
   # Sets environment variables in the workspace
   env = {
-    JAVA_HOME = "${pkgs.jdk17}";
+    JAVA_HOME = pkgs.jdk17;
   };
 
   idx = {
