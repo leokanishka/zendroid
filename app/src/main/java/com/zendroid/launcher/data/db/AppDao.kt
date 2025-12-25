@@ -22,4 +22,7 @@ interface AppDao {
 
     @Query("SELECT * FROM apps WHERE packageName = :packageName LIMIT 1")
     suspend fun getAppByPackage(packageName: String): AppEntity?
+
+    @Query("UPDATE apps SET category = :category WHERE packageName = :packageName")
+    suspend fun updateCategory(packageName: String, category: String)
 }

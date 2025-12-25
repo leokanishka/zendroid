@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenDroid Settings Mockup</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap');
+
+        :root {
+            --bg-color: #0F0F1A;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --primary: #8E2DE2;
+            --text-main: #FFFFFF;
+            --text-dim: rgba(255, 255, 255, 0.6);
+            --accent-green: #00E676;
+        }
+
+        body {
+            background-color: #222;
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .phone {
+            width: 375px;
+            height: 812px;
+            background-color: var(--bg-color);
+            border-radius: 40px;
+            border: 8px solid #222;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 40px 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(15, 15, 26, 0.95);
+            z-index: 10;
+        }
+
+        .back-btn {
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .scroll-content {
+            flex: 1;
+            padding: 0 24px 40px;
+            overflow-y: auto;
+        }
+
+        /* Settings Card */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 4px;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        .label h3 {
+            font-size: 18px;
+            margin: 0 0 4px;
+            font-weight: 500;
+        }
+
+        .label p {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin: 0;
+        }
+
+        /* Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--primary);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(22px);
+        }
+
+        /* Friction Level Selector */
+        .friction-option {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .friction-option.active {
+            background: rgba(142, 45, 226, 0.15);
+            border-color: var(--primary);
+        }
+
+        .radio-circle {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .friction-option.active .radio-circle {
+            border-color: var(--primary);
+        }
+
+        .radio-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: none;
+        }
+
+        .friction-option.active .radio-dot {
+            display: block;
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: inherit;
+            cursor: pointer;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="phone">
+        <div class="header">
+            <span class="back-btn">←</span>
+            <h1>Settings</h1>
+        </div>
+
+        <div class="scroll-content">
+
+            <!-- Guardian Shield -->
+            <div class="card">
+                <div class="card-header">
+                    <span>🛡️</span> Guardian Shield
+                </div>
+                <div class="row">
+                    <div class="label">
+                        <h3>Active Protection</h3>
+                        <p>Enable app interventions</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Friction Level -->
+            <div class="card">
+                <div class="card-header">
+                    <span>⚡</span> Friction Level
+                </div>
+                <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 16px;">
+                    How hard should it be to unlock apps?
+                </p>
+
+                <div class="friction-option">
+                    <div class="radio-circle">
+                        <div class="radio-dot"></div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">Low</div>
+                        <div style="font-size: 12px; color: var(--text-dim);">Quick 3s hold</div>
+                    </div>
+                </div>
+
+                <div class="friction-option active">
+                    <div class="radio-circle">
+                        <div class="radio-dot"></div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">High</div>
+                        <div style="font-size: 12px; color: var(--text-dim);">7s hold + breathing + reason</div>
+                    </div>
+                </div>
+
+                <div class="friction-option">
+                    <div class="radio-circle">
+                        <div class="radio-dot"></div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">Extreme</div>
+                        <div style="font-size: 12px; color: var(--text-dim);">Math problems + 20s breathing</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profiles -->
+            <div class="card">
+                <div class="card-header">
+                    <span>📅</span> Focus Profiles
+                </div>
+                <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 16px;">
+                    Automatic schedules (e.g., Work, Sleep).
+                </p>
+                <button class="btn-full">Manage Schedules (2 Active)</button>
+            </div>
+
+            <!-- App Management -->
+            <div class="card">
+                <div class="card-header">
+                    <span>📱</span> App Management
+                </div>
+                <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 16px;">
+                    Categorize apps as Green, Yellow, or Red.
+                </p>
+                <button class="btn-full">Categorize Apps</button>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

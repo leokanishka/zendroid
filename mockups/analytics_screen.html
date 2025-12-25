@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenDroid Analytics</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap');
+
+        :root {
+            --bg-color: #0F0F1A;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --primary: #8E2DE2;
+            --secondary: #4A00E0;
+            --text-main: #FFFFFF;
+            --text-dim: rgba(255, 255, 255, 0.5);
+            --green: #00E676;
+        }
+
+        body {
+            background-color: #111;
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .phone {
+            width: 375px;
+            height: 812px;
+            background-color: var(--bg-color);
+            border-radius: 40px;
+            border: 8px solid #222;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 40px 24px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .content {
+            flex: 1;
+            padding: 0 24px 40px;
+            overflow-y: auto;
+        }
+
+        .chart-container {
+            background: var(--glass-bg);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-dim);
+        }
+
+        /* Simulating a bar chart */
+        .bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            height: 120px;
+            margin-bottom: 12px;
+        }
+
+        .bar {
+            flex: 1;
+            border-radius: 4px;
+            background: linear-gradient(to top, var(--secondary), var(--primary));
+            opacity: 0.3;
+            transition: 0.3s;
+        }
+
+        .bar.active {
+            opacity: 1;
+            box-shadow: 0 0 15px rgba(142, 45, 226, 0.3);
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            padding: 16px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 24px;
+            font-weight: 600;
+            display: block;
+        }
+
+        .stat-lbl {
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .history-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .history-item {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .history-time {
+            width: 45px;
+            font-size: 12px;
+            color: var(--text-dim);
+            padding-top: 4px;
+        }
+
+        .history-content {
+            flex: 1;
+        }
+
+        .history-app {
+            font-weight: 500;
+            font-size: 15px;
+            margin-bottom: 2px;
+        }
+
+        .history-reason {
+            font-size: 13px;
+            color: var(--text-dim);
+            font-style: italic;
+        }
+
+        .type-tag {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--green);
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="phone">
+        <div class="header">
+            <h1>Mindful Insights</h1>
+            <span style="font-size: 20px;">📅</span>
+        </div>
+
+        <div class="content">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <span class="chart-title">Weekly Focus Score</span>
+                    <span style="font-size: 12px; color: var(--green);">+12% vs last week</span>
+                </div>
+                <div class="bars">
+                    <div class="bar" style="height: 40%;"></div>
+                    <div class="bar" style="height: 60%;"></div>
+                    <div class="bar" style="height: 90%;" class="active"></div>
+                    <div class="bar" style="height: 30%;"></div>
+                    <div class="bar" style="height: 75%;"></div>
+                    <div class="bar active" style="height: 95%;"></div>
+                    <div class="bar" style="height: 50%;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 10px; color: var(--text-dim);">
+                    <span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span>
+                </div>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <span class="stat-val">42</span>
+                    <span class="stat-lbl">Mindful Pauses</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-val" style="color: var(--green);">8.5h</span>
+                    <span class="stat-lbl">Time Saved</span>
+                </div>
+            </div>
+
+            <div class="history-title">Mindful History</div>
+
+            <div class="history-item">
+                <div class="history-time">12:14</div>
+                <div class="history-content">
+                    <span class="type-tag">SAVED</span>
+                    <div class="history-app">Instagram</div>
+                    <div class="history-reason">"Wanted to escape work stress but chose a 5m break instead."</div>
+                </div>
+            </div>
+
+            <div class="history-item">
+                <div class="history-time">10:05</div>
+                <div class="history-content">
+                    <span class="type-tag" style="background: rgba(255,255,255,0.05); color: #AAA;">UNLOCKED</span>
+                    <div class="history-app">Gmail</div>
+                    <div class="history-reason">"Need to check client email for project update."</div>
+                </div>
+            </div>
+
+            <div class="history-item">
+                <div class="history-time">08:30</div>
+                <div class="history-content">
+                    <span class="type-tag">SAVED</span>
+                    <div class="history-app">LinkedIn</div>
+                    <div class="history-reason">"Initial impulse scrolling. Decided to read a book."</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

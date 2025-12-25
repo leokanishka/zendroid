@@ -35,8 +35,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Book
+import androidx.compose.material3.Icon
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.core.graphics.drawable.toBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.lifecycleScope
 import com.zendroid.launcher.data.repository.SessionRepository
 import com.zendroid.launcher.data.repository.SettingsRepository
@@ -134,6 +151,7 @@ fun InterventionScreen(
             when (currentStage) {
                 InterventionStage.REASON -> {
                     ReasonStage(
+                        settingsRepository = settingsRepository,
                         onReasonSubmitted = { submittedReason ->
                             reason = submittedReason
                             currentStage = InterventionStage.DURATION
@@ -172,12 +190,54 @@ enum class InterventionStage {
 
 @Composable
 fun ReasonStage(
+    settingsRepository: SettingsRepository,
     onReasonSubmitted: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
     var text by remember { mutableStateOf("") }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        val zenLevel = remember { settingsRepository.getZenTitrationLevel() }
+        
+        // Zen Icon (Titrated)
+        if (zenLevel != SettingsRepository.ZenTitrationLevel.VOID) {
+            val context = LocalContext.current
+            val targetPackage = (context as? InterventionActivity)?.intent?.getStringExtra(InterventionActivity.EXTRA_TARGET_PACKAGE) ?: ""
+            val iconBitmap = remember(targetPackage) {
+                try {
+                    val drawable = context.packageManager.getApplicationIcon(targetPackage)
+                    drawable.toBitmap().asImageBitmap()
+                } catch (e: Exception) {
+                    null
+                }
+            }
+
+            if (iconBitmap != null) {
+                val alpha = if (zenLevel == SettingsRepository.ZenTitrationLevel.GHOST) 0.15f else 1f
+                val colorMatrix = remember(zenLevel) {
+                    ColorMatrix().apply {
+                        when (zenLevel) {
+                            SettingsRepository.ZenTitrationLevel.MUTED -> setToSaturation(0.4f)
+                            SettingsRepository.ZenTitrationLevel.MONO -> setToSaturation(0f)
+                            else -> {} 
+                        }
+                    }
+                }
+
+                Image(
+                    bitmap = iconBitmap,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .alpha(alpha),
+                    colorFilter = if (zenLevel == SettingsRepository.ZenTitrationLevel.MUTED || zenLevel == SettingsRepository.ZenTitrationLevel.MONO)
+                        ColorFilter.colorMatrix(colorMatrix) else null
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+            }
+        }
+
         Text(
             text = "Wait.",
             style = MaterialTheme.typography.displayMedium,
@@ -187,7 +247,8 @@ fun ReasonStage(
         Text(
             text = "Why do you need to open this app right now?",
             style = MaterialTheme.typography.bodyLarge,
-            color = Color.White.copy(alpha = 0.8f)
+            color = Color.White.copy(alpha = 0.8f),
+            textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(32.dp))
         
@@ -208,6 +269,14 @@ fun ReasonStage(
         
         Spacer(modifier = Modifier.height(32.dp))
         
+        // Mindful Redirect (80/20 Value Add)
+        MindfulRedirectButton(
+            onRedirect = onDismiss,
+            settingsRepository = settingsRepository
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             OutlinedButton(
                 onClick = onDismiss,
@@ -294,28 +363,107 @@ fun FrictionStage(
 
 @Composable
 fun LiquidHoldFriction(durationMs: Long, onComplete: () -> Unit, onCancel: () -> Unit) {
+    val context = LocalContext.current
+    val vibrator = remember { 
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            val vibratorManager = context.getSystemService(android.os.VibratorManager::class.java)
+            vibratorManager?.defaultVibrator
+        } else {
+            @Suppress("DEPRECATION")
+            context.getSystemService(android.os.Vibrator::class.java)
+        }
+    }
+    
     var progress by remember { mutableStateOf(0f) }
-    val scope = rememberCoroutineScope()
-    var isHolding by remember { mutableStateOf(false) }
+    val animatedProgress by animateFloatAsState(targetValue = progress, label = "HoldProgress")
+    var isPressing by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isPressing) {
+        if (isPressing) {
+            // Haptic feedback on press start
+            vibrator?.let {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    it.vibrate(android.os.VibrationEffect.createOneShot(50, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+                } else {
+                    @Suppress("DEPRECATION")
+                    it.vibrate(50)
+                }
+            }
+            
+            val startTime = System.currentTimeMillis()
+            while (isPressing && progress < 1f) {
+                val elapsed = System.currentTimeMillis() - startTime
+                progress = (elapsed.toFloat() / durationMs).coerceIn(0f, 1f)
+                if (progress >= 1f) {
+                    // Success haptic feedback
+                    vibrator?.let {
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                            it.vibrate(android.os.VibrationEffect.createOneShot(100, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+                        } else {
+                            @Suppress("DEPRECATION")
+                            it.vibrate(100)
+                        }
+                    }
+                    onComplete()
+                    break
+                }
+                delay(16)
+            }
+        } else {
+            progress = 0f
+        }
+    }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text("Hold to proceed", style = MaterialTheme.typography.titleLarge, color = Color.White)
-        Spacer(modifier = Modifier.height(32.dp))
+        Text("Wait...", style = MaterialTheme.typography.displayMedium, color = Color.White)
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Hold to proceed", style = MaterialTheme.typography.titleLarge, color = Color.White.copy(alpha = 0.7f))
+        Spacer(modifier = Modifier.height(64.dp))
         
-        Button(
-            onClick = {}, // Handled via press detection ideally, but simplified for now
+        Box(
+            contentAlignment = Alignment.Center,
             modifier = Modifier
-                .size(150.dp)
-                .graphicsLayer(scaleX = 1f + progress, scaleY = 1f + progress),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.White)
+                .size(200.dp)
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onPress = {
+                            isPressing = true
+                            try {
+                                awaitRelease()
+                            } finally {
+                                isPressing = false
+                            }
+                        }
+                    )
+                }
         ) {
-            Text("${(progress * 100).toInt()}%", color = Color.Black)
+            // Background fill
+            CircularProgressIndicator(
+                progress = 1f,
+                modifier = Modifier.fillMaxSize(),
+                color = Color.White.copy(alpha = 0.1f),
+                strokeWidth = 12.dp
+            )
+            
+            // Progress fill
+            CircularProgressIndicator(
+                progress = animatedProgress,
+                modifier = Modifier.fillMaxSize(),
+                color = Color.White,
+                strokeWidth = 12.dp
+            )
+
+            Text(
+                text = "${(progress * 100).toInt()}%",
+                color = Color.White,
+                style = MaterialTheme.typography.headlineLarge
+            )
         }
         
-        // Simplified Logic: Just a button for now since custom press handling is complex in a single tool call
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = onComplete) { Text("Simulate Hold Completion") }
-        TextButton(onClick = onCancel) { Text("Actually, nevermind", color = Color.White.copy(alpha = 0.5f)) }
+        Spacer(modifier = Modifier.height(64.dp))
+        TextButton(onClick = onCancel) { 
+            Text("Actually, nevermind", color = Color.White.copy(alpha = 0.5f)) 
+        }
     }
 }
 
@@ -381,5 +529,29 @@ fun MathFriction(onComplete: () -> Unit, onCancel: () -> Unit) {
             Text("Unlock")
         }
         TextButton(onClick = onCancel) { Text("I can't even", color = Color.White.copy(alpha = 0.5f)) }
+    }
+}
+@Composable
+fun MindfulRedirectButton(onRedirect: () -> Unit, settingsRepository: SettingsRepository) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val redirectPackage = remember { settingsRepository.getRedirectPackage() }
+    
+    OutlinedButton(
+        onClick = { 
+            val intent = context.packageManager.getLaunchIntentForPackage(redirectPackage) ?: 
+                         Intent(Intent.ACTION_MAIN).apply { addCategory(Intent.CATEGORY_HOME) }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+            onRedirect()
+        },
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Default.Book, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Read a book instead", color = Color.White)
+        }
     }
 }

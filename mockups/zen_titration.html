@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenDroid - Zen Titration</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap');
+
+        :root {
+            --bg-color: #0F0F1A;
+            --text-main: #FFFFFF;
+            --text-dim: rgba(255, 255, 255, 0.5);
+            --primary: #8E2DE2;
+            --secondary: #4A00E0;
+        }
+
+        body {
+            background-color: #111;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            font-weight: 300;
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        p.sub {
+            color: var(--text-dim);
+            margin-bottom: 60px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .titration-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        .level-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 24px 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .level-card:hover {
+            border-color: var(--primary);
+            background: rgba(142, 45, 226, 0.05);
+            transform: translateY(-5px);
+        }
+
+        .level-num {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .example-app {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            transition: 0.3s;
+        }
+
+        .app-label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .level-desc {
+            font-size: 11px;
+            color: var(--text-dim);
+            line-height: 1.4;
+        }
+
+        /* Level 0: Standard */
+        .app-lv0 {
+            background: linear-gradient(135deg, #E1306C, #C13584);
+            box-shadow: 0 8px 16px rgba(193, 53, 132, 0.3);
+        }
+
+        /* Level 1: Muted */
+        .app-lv1 {
+            background: linear-gradient(135deg, #E1306C, #C13584);
+            filter: saturate(0.4);
+        }
+
+        /* Level 2: Monochrome (The User's Image fix) */
+        .app-lv2 {
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: transparent;
+        }
+
+        .glyph-lv2 {
+            width: 32px;
+            filter: invert(1) opacity(0.4);
+        }
+
+        /* Level 3: Ghost */
+        .app-lv3 {
+            opacity: 0.1;
+            transform: scale(0.8);
+        }
+
+        /* Level 4: Void */
+        .app-lv4 {
+            display: none;
+        }
+
+        .spectrum-bar {
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, #666, var(--primary), #fff);
+            border-radius: 2px;
+            margin-bottom: 8px;
+            opacity: 0.3;
+        }
+
+        .spectrum-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .insight-box {
+            background: rgba(142, 45, 226, 0.05);
+            border: 1px solid rgba(142, 45, 226, 0.2);
+            padding: 24px;
+            border-radius: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Zen Titration</h1>
+        <p class="sub">
+            A spectrum of visual friction designed to help users gradually decouple their emotional triggers fromtheir
+            apps. Start where you are comfortable, then lean into the void.
+        </p>
+
+        <div class="titration-grid">
+            <!-- LV 0 -->
+            <div class="level-card">
+                <div class="level-num">Level 0</div>
+                <div class="example-app app-lv0">📸</div>
+                <div class="app-label">Standard</div>
+                <div class="level-desc">Full dopamine lure.<br>Max distraction.</div>
+            </div>
+
+            <!-- LV 1 -->
+            <div class="level-card">
+                <div class="level-num">Level 1</div>
+                <div class="example-app app-lv1">📸</div>
+                <div class="app-label">Muted</div>
+                <div class="level-desc">Saturated at 40%.<br>Lower visual pulse.</div>
+            </div>
+
+            <!-- LV 2 -->
+            <div class="level-card">
+                <div class="level-num">Level 2</div>
+                <div class="example-app app-lv2">
+                    <img src="https://img.icons8.com/ios/50/ffffff/camera.png" class="glyph-lv2">
+                </div>
+                <div class="app-label">Mono</div>
+                <div class="level-desc">Neutral glyphs.<br>Cognitive recognition.</div>
+            </div>
+
+            <!-- LV 3 -->
+            <div class="level-card">
+                <div class="level-num">Level 3</div>
+                <div class="example-app app-lv3">📸</div>
+                <div class="app-label">Ghost</div>
+                <div class="level-desc">10% opacity.<br>Force text reading.</div>
+            </div>
+
+            <!-- LV 4 -->
+            <div class="level-card">
+                <div class="level-num">Level 4</div>
+                <div class="example-app app-lv4"></div>
+                <!-- Spacing placeholder -->
+                <div style="height: 64px; margin-bottom: 20px; display: flex; align-items: center; color: #333;">[TEXT
+                    ONLY]</div>
+                <div class="app-label">Void</div>
+                <div class="level-desc">Zero visual triggers.<br>Pure intentionality.</div>
+            </div>
+        </div>
+
+        <div class="spectrum-bar"></div>
+        <div class="spectrum-labels">
+            <span>System 1 (Impulse)</span>
+            <span>Titration Path</span>
+            <span>System 2 (Analytical)</span>
+        </div>
+
+        <div class="insight-box">
+            <strong style="color: white; display: block; margin-bottom: 12px;">Psychological Insight: Titration vs.
+                Hostility</strong>
+            <p style="font-size: 14px; margin: 0; line-height: 1.6; color: var(--text-dim);">
+                By offering a spectrum, ZenDroid avoids the "friction fatigue" that causes users to abandon digital
+                wellbeing tools. Level 2 (Monochrome) is often the "sweet spot" for long-term use—it provides enough
+                visual cue for **Recognition** (efficiency) without providing the **Reward** (colorful gratification)
+                that lures the brain into a doomscrolling loop.
+            </p>
+        </div>
+    </div>
+
+</body>
+
+</html>

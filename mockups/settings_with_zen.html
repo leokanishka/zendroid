@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenDroid Settings - Zen Mode</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --bg-color: #0F0F1A;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --primary: #8E2DE2;
+            --text-main: #FFFFFF;
+            --text-dim: rgba(255, 255, 255, 0.5);
+            --accent-glow: rgba(142, 45, 226, 0.3);
+        }
+
+        body {
+            background-color: #222;
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .phone {
+            width: 375px;
+            height: 812px;
+            background-color: var(--bg-color);
+            border-radius: 40px;
+            border: 8px solid #222;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 40px 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back {
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .content {
+            flex: 1;
+            padding: 0 24px 40px;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* Titration Slider */
+        .titration-box {
+            margin-top: 10px;
+        }
+
+        .slider-desc {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .custom-slider {
+            width: 100%;
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            position: relative;
+            margin: 30px 0 10px;
+        }
+
+        .slider-progress {
+            width: 50%;
+            /* Level 2 (Mono) */
+            height: 100%;
+            background: var(--primary);
+            border-radius: 3px;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .slider-thumb {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            border: 4px solid var(--primary);
+        }
+
+        .ticks {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .tick {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 50px;
+            opacity: 0.4;
+            transition: 0.3s;
+        }
+
+        .tick.active {
+            opacity: 1;
+        }
+
+        .tick-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .tick-icon {
+            font-size: 14px;
+        }
+
+        .preview-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .preview-label {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="phone">
+        <div class="header">
+            <span class="back">←</span>
+            <h1>Zen Mode</h1>
+        </div>
+
+        <div class="content">
+
+            <div class="card">
+                <div class="card-header">🧘 Visual Titration</div>
+                <p class="slider-desc">
+                    Control how luring your apps look. Titrating icons reduces the subconscious dopamine search.
+                </p>
+
+                <div class="preview-label">Live Preview</div>
+
+                <!-- Level 2 Preview -->
+                <div class="preview-box">
+                    <div
+                        style="width: 40px; height: 40px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;">
+                        <img src="https://img.icons8.com/ios/50/ffffff/instagram-new.png"
+                            style="width: 24px; opacity: 0.4;">
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">Instagram</div>
+                        <p style="font-size: 12px; color: var(--text-dim); margin:0;">Level 2: Monochrome Glyph</p>
+                    </div>
+                </div>
+
+                <div class="titration-box">
+                    <div class="custom-slider">
+                        <div class="slider-progress"></div>
+                        <div class="slider-thumb"></div>
+                    </div>
+                    <div class="ticks">
+                        <div class="tick">
+                            <span class="tick-icon">🎨</span>
+                            <span class="tick-label">Standard</span>
+                        </div>
+                        <div class="tick">
+                            <span class="tick-icon">🌫️</span>
+                            <span class="tick-label">Muted</span>
+                        </div>
+                        <div class="tick active">
+                            <span class="tick-icon">🔘</span>
+                            <span class="tick-label">Mono</span>
+                        </div>
+                        <div class="tick">
+                            <span class="tick-icon">👻</span>
+                            <span class="tick-label">Ghost</span>
+                        </div>
+                        <div class="tick">
+                            <span class="tick-icon">⚫</span>
+                            <span class="tick-label">Void</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">🛡️ Protection Details</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                    <div>
+                        <div style="font-weight: 500;">Dynamic Saturation</div>
+                        <p style="font-size: 12px; color: var(--text-dim); margin:0;">Drain color as usage increases</p>
+                    </div>
+                    <div
+                        style="width: 40px; height: 24px; background: var(--primary); border-radius:12px; display: flex; align-items: center; justify-content: flex-end; padding: 0 4px;">
+                        <div style="width: 16px; height: 16px; background: white; border-radius: 50%;"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -13,6 +13,7 @@ import android.os.SystemClock
 import androidx.core.app.NotificationCompat
 import com.zendroid.launcher.MainActivity
 import com.zendroid.launcher.R
+import com.zendroid.launcher.util.CrashReporter
 import com.zendroid.launcher.data.repository.SessionRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -37,6 +38,9 @@ class GuardianService : Service() {
 
     @Inject
     lateinit var sessionRepository: SessionRepository
+
+    @Inject
+    lateinit var interventionManager: com.zendroid.launcher.domain.InterventionManager
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private var watchdogJob: Job? = null
@@ -87,12 +91,34 @@ class GuardianService : Service() {
     }
 
     private suspend fun performWatchdogChecks() {
-        // 1. Cleanup expired sessions
-        sessionRepository.cleanupExpiredSessions()
-        
-        // 2. Check if Accessibility Service is still enabled
-        if (!isAccessibilityServiceEnabled()) {
-            showShieldDownNotification()
+        try {
+            // 1. Cleanup expired sessions
+            sessionRepository.cleanupExpiredSessions()
+            
+            // 2. Check if Accessibility Service is still enabled
+            if (!isAccessibilityServiceEnabled()) {
+                showShieldDownNotification()
+            }
+
+            // 3. Stuck Lock Recovery (Gap B1: Resilience)
+            checkInterventionLockHealth()
+        } catch (e: Exception) {
+            CrashReporter.logException(e)
+        }
+    }
+
+    private var lockDetectedCount = 0
+    private fun checkInterventionLockHealth() {
+        // Gap Fix 2: Smart Watchdog
+        // Only reset if lock is held for > 60 seconds (prevents interrupting breathing)
+        if (interventionManager.isLockStuck(60_000L)) {
+            lockDetectedCount++
+            if (lockDetectedCount >= 1) { // Immediate reset on detection if > 60s
+                interventionManager.forceResetLock() 
+                lockDetectedCount = 0
+            }
+        } else {
+            lockDetectedCount = 0
         }
     }
 
@@ -102,8 +128,21 @@ class GuardianService : Service() {
             android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
         ) ?: return false
         
-        val serviceName = "${packageName}/${ZenDroidAccessibilityService::class.java.canonicalName}"
-        return enabledServices.contains(serviceName)
+        // Real-World Gap 2: Robust Check
+        // System can store as "com.pkg/.Service" OR "com.pkg/com.pkg.Service"
+        val expectedServiceName = ZenDroidAccessibilityService::class.java.simpleName
+        
+        val colonSplit = android.text.TextUtils.SimpleStringSplitter(':')
+        colonSplit.setString(enabledServices)
+        
+        while (colonSplit.hasNext()) {
+            val componentName = colonSplit.next()
+            if (componentName.contains(packageName) && 
+                componentName.contains(expectedServiceName)) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun showShieldDownNotification() {

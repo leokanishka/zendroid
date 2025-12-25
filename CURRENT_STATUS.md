@@ -1,28 +1,35 @@
 # Current Project Status
 
-## Status: Sprint 2 Complete ✅ | IDX Environment Pending ⏳
+## Status: Sprint 3 Complete ✅
 
-**Code Status:** All Sprint 2 features implemented and pushed (commit `508629b`).
+**Last Updated:** Dec 25, 2025
 
-## Verification Options
-
-### Option A: Local Build (Recommended)
-```powershell
-cd d:\zendroid
-.\gradlew.bat assembleDebug
+## Latest Build
 ```
-Requires: Java 17+, Android SDK
+BUILD SUCCESSFUL in 11m 34s
+Unit Tests: 5 passed, 1 skipped
+```
 
-### Option B: IDX (When Available)
-Pull `508629b`, rebuild environment, then `./gradlew assembleDebug`
+## Sprint 3 Accomplishments
+- ✅ Focus Profiles enabled in Settings
+- ✅ Haptic feedback on hold-to-unlock
+- ✅ All unit tests passing
+- ⏸️ Firebase Crashlytics (pending google-services.json)
 
-## Sprint 2 Features Ready
+## APK Location
+```
+d:\zendroid\app\build\outputs\apk\debug\app-debug.apk
+```
+
+## Features Ready for Testing
 - Intervention flow (Reason → Duration → Friction)
 - Friction Engine (Breathing, Math, Hold)
-- Settings screen
+- Settings screen with all controls
+- Focus Profiles (Schedules)
 - Session management
-- Race condition guards
+- Haptic feedback on unlock
 
-## Next: Sprint 3
-- Yellow app bottom sheet
-- UI polish (animations, hold-to-unlock)
+## Next Steps
+1. Fix IDX environment (`.idx/dev.nix`)
+2. Create tester checklist
+3. Set up Firebase (optional)

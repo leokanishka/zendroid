@@ -58,6 +58,15 @@
             android:excludeFromRecents="true"
             android:taskAffinity=""
             android:configChanges="orientation|screenSize|keyboardHidden" />
+
+        <activity
+            android:name=".ui.intervention.YellowInterventionActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.ZenDroid.Transparent"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:configChanges="orientation|screenSize|keyboardHidden" />
         
         <!-- Settings Activity -->
         <activity
@@ -65,6 +74,27 @@
             android:exported="false"
             android:theme="@style/Theme.ZenDroid"
             android:label="Settings" />
+        
+        <!-- App Categorization Activity (Gap Fix 3) -->
+        <activity
+            android:name=".ui.settings.AppCategorizationActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ZenDroid"
+            android:label="App Management" />
+        
+        <!-- Schedules Activity (Gap Fix 3) -->
+        <activity
+            android:name=".ui.schedules.SchedulesActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ZenDroid"
+            android:label="Focus Profiles" />
+        
+        <!-- Shield Health Activity (Gap Fix 3) -->
+        <activity
+            android:name=".ui.settings.ShieldHealthActivity"
+            android:exported="false"
+            android:theme="@style/Theme.ZenDroid"
+            android:label="Shield Health" />
         
         <!-- Accessibility Service (Gap A1: Real-time detection) -->
         <service

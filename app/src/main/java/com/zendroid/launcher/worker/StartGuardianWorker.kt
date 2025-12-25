@@ -17,10 +17,16 @@ import dagger.assisted.AssistedInject
 @HiltWorker
 class StartGuardianWorker @AssistedInject constructor(
     @Assisted private val context: Context,
-    @Assisted workerParams: WorkerParameters
+    @Assisted workerParams: WorkerParameters,
+    private val sessionRepository: com.zendroid.launcher.data.repository.SessionRepository
 ) : CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
+        // Handle Boot Cleanup (Fix for Gap D1: elapsedRealtime reset)
+        if (inputData.getString("action") == "boot_cleanup") {
+            sessionRepository.clearAllSessions()
+        }
+
         val intent = Intent(context, GuardianService::class.java)
         
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

@@ -15,12 +15,28 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: AppRepository
+    private val repository: AppRepository,
+    private val sessionRepository: com.zendroid.launcher.data.repository.SessionRepository,
+    private val settingsRepository: com.zendroid.launcher.data.repository.SettingsRepository,
+    private val iconCache: com.zendroid.launcher.util.IconCache
 ) : ViewModel() {
+
+    fun getIcon(packageName: String) = iconCache.getIcon(packageName)
+
+    private val _zenLevel = MutableStateFlow(settingsRepository.getZenTitrationLevel())
+    val zenLevel: StateFlow<com.zendroid.launcher.data.repository.SettingsRepository.ZenTitrationLevel> = _zenLevel
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery
     
+    // SSOT for sessions today (Mindful Pauses)
+    val mindfulPauses: StateFlow<Int> = sessionRepository.getAllSessionsTodayCount()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = 0
+        )
+
     // The SSOT for UI: Combines DB apps with Search Query
     val uiState: StateFlow<HomeUiState> = repository.apps
         .combine(_searchQuery) { apps, query ->
@@ -47,6 +63,7 @@ class HomeViewModel @Inject constructor(
 
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
+        // ZenLevel is already reactive via StateFlow, no need to refresh here (HIGH Issue Fix 2)
     }
 }
 

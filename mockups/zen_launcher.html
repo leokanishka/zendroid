@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZenDroid - Zen Mode Launcher</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500&display=swap');
+
+        :root {
+            --bg-color: #0A0A0A;
+            /* Deeper black */
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #E0E0E0;
+            --text-dim: #666666;
+            --accent-gray: #333333;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .phone {
+            width: 375px;
+            height: 812px;
+            background-color: var(--bg-color);
+            border-radius: 40px;
+            border: 8px solid #222;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            padding: 60px 32px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        header {
+            margin-bottom: 48px;
+        }
+
+        .time {
+            font-size: 64px;
+            font-weight: 200;
+            letter-spacing: -2px;
+            margin: 0;
+            color: white;
+        }
+
+        .date {
+            font-size: 16px;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .stats-minimal {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 64px;
+        }
+
+        .stat {
+            font-size: 13px;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #444;
+        }
+
+        /* The List Launcher (Minimized Distraction) */
+        .app-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .app-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+            color: inherit;
+            opacity: 0.6;
+            transition: opacity 0.3s, transform 0.2s;
+            cursor: pointer;
+        }
+
+        .app-row:hover {
+            opacity: 1;
+            transform: translateX(4px);
+        }
+
+        /* Abstract Monochrome Icons */
+        .mono-icon {
+            width: 24px;
+            height: 24px;
+            filter: grayscale(1) brightness(2);
+            opacity: 0.5;
+        }
+
+        .app-label {
+            font-size: 18px;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        /* The "Red" indication is now a subtle dot, not a screaming color */
+        .caution-indicator {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #FF3D00;
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .app-row:hover .caution-indicator {
+            opacity: 0.4;
+        }
+
+        .dock-minimal {
+            margin-top: auto;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .dock-btn {
+            font-size: 20px;
+            color: var(--text-dim);
+            transition: 0.3s;
+        }
+
+        .dock-btn:hover {
+            color: white;
+        }
+
+        /* Subtle Glow for "Zen Mode" toggle */
+        .zen-status {
+            position: absolute;
+            top: 24px;
+            right: 32px;
+            font-size: 10px;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .zen-status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #E0E0E0;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="phone">
+        <div class="zen-status">Zen Mode Active</div>
+
+        <div class="content">
+            <header>
+                <div class="date">Wednesday, Dec 24</div>
+                <h1 class="time">13:14</h1>
+            </header>
+
+            <div class="stats-minimal">
+                <div class="stat"><span class="stat-dot"></span> 82% Screen Remaining</div>
+                <div class="stat"><span class="stat-dot"></span> 3 mindful pauses</div>
+            </div>
+
+            <div class="app-list">
+                <!-- Sorted by usage or alphabet, minimal visual weight -->
+                <div class="app-row">
+                    <img src="https://img.icons8.com/ios-filled/50/ffffff/camera.png" class="mono-icon" alt="icon">
+                    <span class="app-label">Instagram</span>
+                    <div class="caution-indicator"></div>
+                </div>
+
+                <div class="app-row" style="opacity: 0.8;">
+                    <img src="https://img.icons8.com/ios-filled/50/ffffff/mail.png" class="mono-icon" alt="icon">
+                    <span class="app-label">Messages</span>
+                </div>
+
+                <div class="app-row">
+                    <img src="https://img.icons8.com/ios-filled/50/ffffff/browser.png" class="mono-icon" alt="icon">
+                    <span class="app-label">Browser</span>
+                </div>
+
+                <div class="app-row" style="opacity: 0.8;">
+                    <img src="https://img.icons8.com/ios-filled/50/ffffff/kindle.png" class="mono-icon" alt="icon">
+                    <span class="app-label">Kindle</span>
+                </div>
+
+                <div class="app-row">
+                    <img src="https://img.icons8.com/ios-filled/50/ffffff/settings.png" class="mono-icon" alt="icon">
+                    <span class="app-label">Zen Settings</span>
+                </div>
+            </div>
+
+            <div class="dock-minimal">
+                <div class="dock-btn">🌑</div>
+                <div class="dock-btn">⚔️</div>
+                <div class="dock-btn">🧘</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

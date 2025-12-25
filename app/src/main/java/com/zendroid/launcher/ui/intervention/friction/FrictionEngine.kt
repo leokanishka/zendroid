@@ -17,8 +17,10 @@ object FrictionEngine {
     }
 
     enum class FrictionLevel {
-        HIGH,   // Full randomization
-        LOW     // Only quick hold (3s)
+        LOW,    // Quick hold (3s)
+        MEDIUM, // Moderate hold (5s) or Breathing (10s)
+        HIGH,   // Full randomization (7s hold / 15s breathing)
+        EXTREME // Math or Long Breathing (20s)
     }
 
     /**
@@ -27,10 +29,12 @@ object FrictionEngine {
     fun selectFriction(level: FrictionLevel): FrictionType {
         return when (level) {
             FrictionLevel.LOW -> FrictionType.LIQUID_HOLD
+            FrictionLevel.MEDIUM -> if (Random.nextBoolean()) FrictionType.LIQUID_HOLD else FrictionType.BREATHING
             FrictionLevel.HIGH -> {
                 val types = FrictionType.entries
                 types[Random.nextInt(types.size)]
             }
+            FrictionLevel.EXTREME -> if (Random.nextBoolean()) FrictionType.MATH else FrictionType.BREATHING
         }
     }
 
@@ -39,8 +43,16 @@ object FrictionEngine {
      */
     fun getDurationMs(type: FrictionType, level: FrictionLevel): Long {
         return when (type) {
-            FrictionType.LIQUID_HOLD -> if (level == FrictionLevel.LOW) 3000L else 7000L
-            FrictionType.BREATHING -> 15000L
+            FrictionType.LIQUID_HOLD -> when(level) {
+                FrictionLevel.LOW -> 3000L
+                FrictionLevel.MEDIUM -> 5000L
+                else -> 7000L
+            }
+            FrictionType.BREATHING -> when(level) {
+                FrictionLevel.MEDIUM -> 10000L
+                FrictionLevel.EXTREME -> 20000L
+                else -> 15000L
+            }
             FrictionType.MATH -> 0L // No fixed duration; depends on user
         }
     }

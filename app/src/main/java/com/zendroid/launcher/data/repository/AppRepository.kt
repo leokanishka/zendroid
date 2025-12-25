@@ -46,4 +46,9 @@ class AppRepository @Inject constructor(
         // 2. Remove uninstalled
         appDao.deleteStartledApps(activePackages.toList())
     }
+    suspend fun updateAppCategory(packageName: String, category: String) {
+        withContext(Dispatchers.IO) {
+            appDao.updateCategory(packageName, category)
+        }
+    }
 }

@@ -13,5 +13,6 @@ data class SessionEntity(
     val startTimeElapsed: Long,    // SystemClock.elapsedRealtime() at session start
     val durationMinutes: Int,
     val expiryTimeElapsed: Long,   // startTimeElapsed + (durationMinutes * 60 * 1000)
-    val reason: String = ""        // User's stated reason for using the app
+    val reason: String = "",       // User's stated reason for using the app
+    val createdAtMillis: Long = System.currentTimeMillis()  // Gap Fix 2: Wall-clock for "today"
 )

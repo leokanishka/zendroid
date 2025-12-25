@@ -30,6 +30,7 @@ class BootCompletedReceiver : BroadcastReceiver() {
 
             // Use WorkManager to start Guardian after device is ready (Gap B4)
             val workRequest = OneTimeWorkRequestBuilder<StartGuardianWorker>()
+                .setInputData(androidx.work.workDataOf("action" to "boot_cleanup"))
                 .build()
             
             WorkManager.getInstance(context).enqueue(workRequest)
