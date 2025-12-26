@@ -78,6 +78,45 @@ Expected: `app-debug.apk` (10-20 MB)
 
 ---
 
+## Step 5.5: Firebase Studio (IDX) Complete Build Guide
+
+### Step 1: Find the Nix Android SDK
+```bash
+find /nix/store -path "*android-sdk/platforms" 2>/dev/null | head -1
+# Example output: /nix/store/abc123-androidsdk/libexec/android-sdk/platforms
+# SDK root is the parent of "platforms"
+```
+
+### Step 2: Create Writable SDK Copy (Nix SDK is read-only)
+```bash
+SDK_PATH=$(find /nix/store -path "*android-sdk/platforms" 2>/dev/null | head -1 | sed 's|/platforms||')
+cp -r "$SDK_PATH" ~/.androidsdk_writable
+chmod -R u+w ~/.androidsdk_writable
+```
+
+### Step 3: Configure local.properties
+```bash
+echo 'sdk.dir=/home/user/.androidsdk_writable' > local.properties
+```
+
+### Step 4: Add AndroidX Flags to gradle.properties
+```bash
+echo 'android.useAndroidX=true' >> gradle.properties
+echo 'android.enableJetifier=false' >> gradle.properties
+```
+
+### Step 5: Build with Metadata Skip (Required in Firebase Studio)
+```bash
+./gradlew assembleDebug --no-daemon -x checkDebugAarMetadata
+```
+
+### Expected Result
+- Build time: ~3 minutes
+- APK location: `app/build/outputs/apk/debug/app-debug.apk`
+- APK size: ~18 MB
+
+---
+
 ## Step 6: Common Errors & Fixes
 
 ### Error: "SDK location not found"

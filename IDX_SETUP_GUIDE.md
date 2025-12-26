@@ -92,19 +92,62 @@ Kotlin: 1.9.x
 
 ---
 
+## Phase 4.5: Configure Android SDK (CRITICAL)
+
+> [!IMPORTANT]
+> The Nix Android SDK is read-only. You must create a writable copy.
+
+### Step 4.5.1: Find the Nix Android SDK
+```bash
+find /nix/store -path "*android-sdk/platforms" 2>/dev/null | head -1
+```
+
+**Example output:** `/nix/store/abc123-androidsdk/libexec/android-sdk/platforms`
+
+### Step 4.5.2: Create Writable SDK Copy
+```bash
+SDK_PATH=$(find /nix/store -path "*android-sdk/platforms" 2>/dev/null | head -1 | sed 's|/platforms||')
+cp -r "$SDK_PATH" ~/.androidsdk_writable
+chmod -R u+w ~/.androidsdk_writable
+```
+
+### Step 4.5.3: Configure local.properties
+```bash
+echo 'sdk.dir=/home/user/.androidsdk_writable' > local.properties
+```
+
+### Step 4.5.4: Add AndroidX Flags
+```bash
+echo 'android.useAndroidX=true' >> gradle.properties
+echo 'android.enableJetifier=false' >> gradle.properties
+```
+
+### Step 4.5.5: Verify
+```bash
+cat local.properties
+ls ~/.androidsdk_writable/platforms/
+```
+
+---
+
 ## Phase 5: Build the APK
 
 ### Step 5.1: Run Debug Build
 ```bash
-./gradlew assembleDebug
+./gradlew assembleDebug --no-daemon -x checkDebugAarMetadata
 ```
 
-**Expected:** `BUILD SUCCESSFUL` (takes 10-15 minutes first time)
+> [!NOTE]
+> The `-x checkDebugAarMetadata` flag skips a metadata check that fails in Firebase Studio cloud environment.
+
+**Expected:** `BUILD SUCCESSFUL in ~3 minutes`
 
 ### Step 5.2: Locate APK
+```bash
+ls -la app/build/outputs/apk/debug/app-debug.apk
 ```
-app/build/outputs/apk/debug/app-debug.apk
-```
+
+**Expected:** File size ~18 MB
 
 ---
 
