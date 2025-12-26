@@ -2,7 +2,6 @@ package com.zendroid.launcher.worker
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -28,12 +27,7 @@ class StartGuardianWorker @AssistedInject constructor(
         }
 
         val intent = Intent(context, GuardianService::class.java)
-        
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(intent)
-        } else {
-            context.startService(intent)
-        }
+        context.startForegroundService(intent)
         
         return Result.success()
     }

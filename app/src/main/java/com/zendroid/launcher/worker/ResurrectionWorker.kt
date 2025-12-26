@@ -2,7 +2,6 @@ package com.zendroid.launcher.worker
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import androidx.core.app.NotificationCompat
@@ -18,10 +17,10 @@ import com.zendroid.launcher.service.GuardianService
  * Project Lazarus: Periodically checks and restarts the GuardianService.
  *
  * Addresses the OEM "Zombie" risk by ensuring the foreground service stays alive.
- * Runs every 15 minutes (minimum interval allowed by WorkManager).
+ * Runs every 15 minutes (minimum interval allowed by WorkManager).
  *
  * **Robustness notes**
- * 1. **Overlay permission** – on Android 12+ we need the `SYSTEM_ALERT_WINDOW`
+ * 1. **Overlay permission** – on Android 12+ we need the `SYSTEM_ALERT_WINDOW`
  *    permission to start a foreground service from the background. The worker now
  *    checks `Settings.canDrawOverlays()` before attempting the start.
  * 2. **Idempotent start** – calling `startForegroundService` on an already
@@ -47,23 +46,18 @@ class ResurrectionWorker(
     private fun restartGuardian() {
         val intent = Intent(applicationContext, GuardianService::class.java)
         
-        // Android 8.0+ requires startForegroundService for FGS
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (Settings.canDrawOverlays(applicationContext)) {
-                try {
-                    // Overlay permission granted – safe to start foreground service
-                    applicationContext.startForegroundService(intent)
-                } catch (e: Exception) {
-                    Log.e("ResurrectionWorker", "Failed to resurrect Guardian", e)
-                    throw e // Retry
-                }
-            } else {
-                Log.w("ResurrectionWorker", "Overlay permission missing; cannot start GuardianService from background.")
-                // No retry now – the periodic worker will run again later.
-                showOverlayPermissionNotification()
+        if (Settings.canDrawOverlays(applicationContext)) {
+            try {
+                // Overlay permission granted – safe to start foreground service
+                applicationContext.startForegroundService(intent)
+            } catch (e: Exception) {
+                Log.e("ResurrectionWorker", "Failed to resurrect Guardian", e)
+                throw e // Retry
             }
         } else {
-            applicationContext.startService(intent)
+            Log.w("ResurrectionWorker", "Overlay permission missing; cannot start GuardianService from background.")
+            // No retry now – the periodic worker will run again later.
+            showOverlayPermissionNotification()
         }
     }
 
@@ -72,16 +66,14 @@ class ResurrectionWorker(
         val channelId = "overlay_permission_channel"
         val nm = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                "Overlay Permission",
-                NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Required to keep your digital shield active"
-            }
-            nm.createNotificationChannel(channel)
+        val channel = NotificationChannel(
+            channelId,
+            "Overlay Permission",
+            NotificationManager.IMPORTANCE_HIGH
+        ).apply {
+            description = "Required to keep your digital shield active"
         }
+        nm.createNotificationChannel(channel)
 
         val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).apply {
             data = Uri.parse("package:${applicationContext.packageName}")

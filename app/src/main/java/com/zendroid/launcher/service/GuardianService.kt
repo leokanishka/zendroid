@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.IBinder
 import android.os.SystemClock
 import androidx.core.app.NotificationCompat
@@ -68,11 +67,7 @@ class GuardianService : Service() {
         super.onTaskRemoved(rootIntent)
         // Self-restart when swiped from recents (Gap B1)
         val restartIntent = Intent(applicationContext, GuardianService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(restartIntent)
-        } else {
-            startService(restartIntent)
-        }
+        startForegroundService(restartIntent)
     }
 
     override fun onDestroy() {
@@ -182,17 +177,15 @@ class GuardianService : Service() {
     }
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                "ZenDroid Guardian",
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = "Keeps ZenDroid running to protect your focus"
-                setShowBadge(false)
-            }
-            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            nm.createNotificationChannel(channel)
+        val channel = NotificationChannel(
+            CHANNEL_ID,
+            "ZenDroid Guardian",
+            NotificationManager.IMPORTANCE_LOW
+        ).apply {
+            description = "Keeps ZenDroid running to protect your focus"
+            setShowBadge(false)
         }
+        val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        nm.createNotificationChannel(channel)
     }
 }
