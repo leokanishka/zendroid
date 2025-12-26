@@ -3,6 +3,7 @@ package com.zendroid.launcher.ui.intervention
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -88,6 +89,13 @@ class InterventionActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
+        // Disable back button during intervention (friction by design)
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Intentionally empty - back button is disabled during intervention
+            }
+        })
+        
         targetPackage = intent.getStringExtra(EXTRA_TARGET_PACKAGE) ?: ""
         
         setContent {
@@ -117,11 +125,6 @@ class InterventionActivity : ComponentActivity() {
             }
             finish()
         }
-    }
-
-    @Deprecated("Use OnBackPressedDispatcher", ReplaceWith("onBackPressedDispatcher"))
-    override fun onBackPressed() {
-        // Friction: back button disabled
     }
 }
 
