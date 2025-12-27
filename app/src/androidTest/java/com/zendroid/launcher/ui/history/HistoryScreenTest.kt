@@ -47,7 +47,7 @@ class HistoryScreenTest {
             HistoryContent(
                 sessions = sessions,
                 analytics = analytics,
-                zenLevel = SettingsRepository.ZenTitrationLevel.NONE,
+                zenLevel = SettingsRepository.ZenTitrationLevel.STANDARD,
                 onGetIcon = { null }
             )
         }
@@ -82,7 +82,7 @@ class HistoryScreenTest {
              HistoryContent(
                 sessions = sessions,
                 analytics = analytics,
-                zenLevel = SettingsRepository.ZenTitrationLevel.NONE,
+                zenLevel = SettingsRepository.ZenTitrationLevel.STANDARD,
                 onGetIcon = { null }
             )
         }
